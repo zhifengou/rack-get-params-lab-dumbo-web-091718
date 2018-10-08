@@ -10,7 +10,25 @@ class Application
       @@items.each do |item|
         resp.write "#{item}\n"
       end 
-    elsif 
+    elsif req.path.match(/search/)
+      search_term = req.params["q"]
+      resp.write handle_search(search_term)
+    elsif req.path.match(/cart/)
+      if @@cart.size==0 
+        resp.write "Your cart is empty"
+      else 
+        @@cart.each do |item|
+          resp.write "#{item}\n"
+        end 
+      end 
+    elsif req.path.match(/add/)
+      item = req.params["item"]
+      resp.write handle_add
+    else 
+      resp.write "Path not found"
+    end 
+    resp.finish
+  end
 
   def call(env)
     resp = Rack::Response.new
